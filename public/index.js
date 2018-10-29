@@ -8,8 +8,9 @@
 
 $(document).ready(() => {
     // code for selecting particular camera
-    $("#search").click(() => {
-        let cam_id = document.getElementById("cam_id").value;
+    setInterval(() => {
+        // let cam_id = document.getElementById("cam_id").value;
+        let cam_id = 1;
         $.get("/start_ffmpeg", {
             "cam_id": cam_id,
         },
@@ -18,5 +19,8 @@ $(document).ready(() => {
                 document.getElementById("demo").innerHTML = ob;
             }
         });
-    });
+    }, 2000);
+    // $("#search").click(() => {
+        
+    // });
 });
