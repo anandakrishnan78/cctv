@@ -20,16 +20,17 @@ app.use(express.static("public"));
  */
 app.get("/start_ffmpeg", (request, response) => {
     let cam_id = request.query.cam_id;
-    let xmlfile = __dirname + "/xmlFile/vessels.xml";
+    let xmlFile = __dirname + "/xmlFile/vessels.xml";
     let path, ip, portNumber, protocol, userName, passWord;
     let url = "";
     try {
-        fs.readFile(xmlfile, "utf-8", function (error, xml) {
+        fs.readFile(xmlFile, "utf-8", function (error, xml) {
             if (error) {
                 throw error;
             } else {
                 if(procArray[cam_id]){
                     response.send(dataArray[cam_id]);
+                    console.log("call on ffmpeg");
                     return;
                 }
                 parseString(xml, function (err, result) {
@@ -60,6 +61,7 @@ app.get("/start_ffmpeg", (request, response) => {
  * @param {*} response 
  */
 function processCCTV(cam_id, url, response) {
+    console.log("first call on ffmpeg");
     let ffmpegPath = __dirname + "\\ffmpeg";
     const proc = spawn(ffmpegPath, ["-rtsp_transport", "tcp", "-y", "-i", url, "-ss", "00:00:01.500", "-vf", "fps=1/2", "-f", "image2pipe", "-"]);
     procArray[cam_id] = proc.pid;
@@ -69,9 +71,9 @@ function processCCTV(cam_id, url, response) {
     if (response) {
         response.send(dataArray[cam_id]);
     }
-    proc.stderr.on("data", (data) => {
-        console.log(`stderr: ${data}`);
-    });
+    // proc.stderr.on("data", (data) => {
+    //     console.log(`stderr: ${data}`);
+    // });
     proc.on("close", (code) => {
         console.log(`child process exited with code ${code}`);
     });
